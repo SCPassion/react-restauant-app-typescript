@@ -3,6 +3,7 @@ import { supabase } from "./supabase-client"
 import { useState, useEffect } from "react"
 import { PostgrestError } from "@supabase/supabase-js"
 import { CiCirclePlus } from "react-icons/ci"
+import useInitialLoadMenu from "./hooks/useInitialLoadMenu"
 
 type Ingredient = {
   ingredients: string[] // Corrected type for ingredients
@@ -22,32 +23,9 @@ type supabaseResponse = {
 }
 
 function App() {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([])
+  const [menuItems] = useInitialLoadMenu<MenuItem>()
   const [selectedItems, setSelectItems] = useState<MenuItem[]>([])
-
-  useEffect(() => {
-    async function fetchAllData() {
-      try {
-        const { data, error }: supabaseResponse = await supabase
-          .from("menu")
-          .select("*")
-
-        if (error) {
-          throw new Error(`Error fetching data: ${error.message}`)
-        }
-        if (data) {
-          setMenuItems(data)
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error("Error fetching data:", error)
-        }
-      }
-    }
-
-    fetchAllData()
-  }, [])
-
+  console.log(menuItems)
   function handleSelectItem(id: number) {
     const selectItem = menuItems.find((item) => item.id === id)
     if (selectItem) {
