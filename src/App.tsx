@@ -23,6 +23,8 @@ type supabaseResponse = {
 
 function App() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
+  const [selectedItems, setSelectItems] = useState<MenuItem[]>([])
+
   useEffect(() => {
     async function fetchAllData() {
       try {
@@ -46,6 +48,13 @@ function App() {
     fetchAllData()
   }, [])
 
+  function handleSelectItem(id: number) {
+    const selectItem = menuItems.find((item) => item.id === id)
+    if (selectItem) {
+      setSelectItems((prevSelectItems) => [...prevSelectItems, selectItem])
+    }
+  }
+
   const menuElements =
     menuItems.length > 0 &&
     menuItems.map((item) => (
@@ -62,7 +71,10 @@ function App() {
           <p className="text-xl">${item.price}</p>
         </div>
 
-        <button className="ml-auto cursor-pointer opacity-30 hover:opacity-100">
+        <button
+          className="ml-auto cursor-pointer opacity-30 hover:opacity-100"
+          onClick={() => handleSelectItem(item.id)}
+        >
           <CiCirclePlus size={40} />
         </button>
       </div>
