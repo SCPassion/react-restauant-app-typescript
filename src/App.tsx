@@ -19,6 +19,7 @@ type MenuItem = {
 function App() {
   const [menuItems] = useInitialLoadMenu<MenuItem>()
   const [selectedItems, setSelectItems] = useState<MenuItem[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   function handleSelectItem(id: number) {
     const selectItem = menuItems.find((item) => item.id === id)
@@ -31,6 +32,10 @@ function App() {
     setSelectItems((prevSelectedItems) =>
       prevSelectedItems.filter((item) => item.id !== id),
     )
+  }
+
+  function handleCompleteOrder() {
+    setIsModalOpen(true)
   }
 
   const menuElements =
@@ -94,7 +99,10 @@ function App() {
             <p className="text-3xl">Total price:</p>
             <p className="text-xl">${totalPrice}</p>
           </div>
-          <button className="font-verdana mb-14.25 w-full cursor-pointer rounded-sm bg-[#16DB99] py-4.5 text-white">
+          <button
+            className="font-verdana mb-14.25 w-full cursor-pointer rounded-sm bg-[#16DB99] py-4.5 font-bold text-white"
+            onClick={handleCompleteOrder}
+          >
             Complete order
           </button>
         </section>
