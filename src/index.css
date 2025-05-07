@@ -4,13 +4,14 @@
   --font-sans: "Smythe", sans-serif;
   --font-verdana: "Verdana", sans-serif;
 }
+/* this is the go-to way to handle initial layout*/
 html,
-body {
+body,
+#root {
   width: 100%;
   height: 100%;
 }
 
-#root {
-  height: 100vh;
+body {
   background-color: gray;
 }
