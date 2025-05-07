@@ -2,19 +2,8 @@ import Header from "./components/Header"
 import { useState } from "react"
 import { CiCirclePlus } from "react-icons/ci"
 import useInitialLoadMenu from "./hooks/useInitialLoadMenu"
-import { nanoid } from "nanoid"
-
-type Ingredient = {
-  ingredients: string[] // Corrected type for ingredients
-}
-
-type MenuItem = {
-  id: number
-  name: string
-  emoji: string
-  price: number
-  ingredients: Ingredient
-}
+import { type MenuItem } from "./types/types"
+import Orders from "./components/Orders"
 
 function App() {
   const [menuItems] = useInitialLoadMenu<MenuItem>()
@@ -36,6 +25,12 @@ function App() {
 
   function handleCompleteOrder() {
     setIsModalOpen(true)
+  }
+
+  function formAction(formData: FormData) {
+    setIsModalOpen(false)
+    const data = Object.fromEntries(formData)
+    console.log(data)
   }
 
   const menuElements =
@@ -63,49 +58,59 @@ function App() {
       </div>
     ))
 
-  const selectedItemsElements = selectedItems.map((item) => (
-    <div key={nanoid()} className="flex items-center justify-center gap-5.5">
-      <p className="text-3xl font-normal">{item.name}</p>
-      <button
-        className="cursor-pointer text-sm text-[#BBBBBB]"
-        onClick={() => handleRemoveItem(item.id)}
-      >
-        remove
-      </button>
-      <p className="ml-auto text-xl">${item.price}</p>
-    </div>
-  ))
-
-  const totalPrice = selectedItems.reduce(
-    (total, item) => total + item.price,
-    0,
-  )
-
   return (
-    <div className="mx-auto w-150 border-2 border-red-900">
+    <div className="relative mx-auto w-150 border-2 border-red-900">
       <Header />
       <section className="bg-gray-200 px-11.5">
         {menuItems.length > 0 && menuElements}
       </section>
 
       {selectedItems.length > 0 && (
-        <section className="bg-gray-200 px-11.5">
-          <h2 className="pt-11.25 pb-16 text-center text-3xl font-normal">
-            Your order
-          </h2>
-          {selectedItemsElements}
-          <hr className="my-8 border-b-2 border-black bg-black" />
-          <div className="flex items-center justify-between pb-14.25">
-            <p className="text-3xl">Total price:</p>
-            <p className="text-xl">${totalPrice}</p>
-          </div>
-          <button
-            className="font-verdana mb-14.25 w-full cursor-pointer rounded-sm bg-[#16DB99] py-4.5 font-bold text-white"
-            onClick={handleCompleteOrder}
+        <Orders
+          selectedItems={selectedItems}
+          handleRemoveItem={handleRemoveItem}
+          handleCompleteOrder={handleCompleteOrder}
+        />
+      )}
+
+      {isModalOpen && (
+        <div className="fixed inset-0 m-auto flex h-136 w-131 bg-white shadow-2xl">
+          <form
+            className="flex h-full w-full flex-col items-center justify-center gap-6 px-6 py-7.5"
+            action={formAction}
           >
-            Complete order
-          </button>
-        </section>
+            <h3 className="font-verdana text-2xl font-bold">
+              Enter card details
+            </h3>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter your name"
+              aria-label="name"
+              className="font-verdana w-full rounded-sm border-2 border-[#757575] px-4 py-2 text-xl font-normal text-[#757575]"
+              required
+            />
+            <input
+              type="number"
+              name="cardNumber"
+              placeholder="Enter card number"
+              aria-label="card number"
+              className="font-verdana w-full rounded-sm border-2 border-[#757575] px-4 py-2 text-xl font-normal text-[#757575]"
+              required
+            />
+            <input
+              type="number"
+              name="cvv"
+              placeholder="Enter CVV"
+              aria-label="cvv"
+              className="font-verdana w-full rounded-sm border-2 border-[#757575] px-4 py-2 text-xl font-normal text-[#757575]"
+              required
+            />
+            <button className="font-verdana w-full cursor-pointer rounded-sm bg-[#16DB99] py-5 text-xl font-bold text-white">
+              Pay
+            </button>
+          </form>
+        </div>
       )}
     </div>
   )
